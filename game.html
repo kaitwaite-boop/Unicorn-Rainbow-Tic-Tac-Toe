@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌈🦄 Rainbow Unicorn Tic-Tac-Toe 🦄🌈</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&family=Baloo+2:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Fredoka', 'Baloo 2', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    overflow-x: hidden;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.container {
+    text-align: center;
+    max-width: 600px;
+    width: 100%;
+    animation: fadeIn 0.8s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+header {
+    margin-bottom: 30px;
+}
+
+.title {
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    background: linear-gradient(45deg, #ff006e, #8338ec, #3a86ff, #06ffa5, #ffbe0b, #fb5607);
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: rainbowText 3s ease infinite;
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+    margin-bottom: 10px;
+}
+
+@keyframes rainbowText {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+.sparkle {
+    display: inline-block;
+    animation: sparkle 2s ease-in-out infinite;
+    font-size: 2rem;
+}
+
+@keyframes sparkle {
+    0%, 100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    50% { transform: scale(1.3) rotate(180deg); opacity: 0.8; }
+}
+
+.subtitle {
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.95);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    font-weight: 500;
+}
+
+.game-info {
+    margin-bottom: 25px;
+}
+
+.player-indicator {
+    font-size: 1.3rem;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.status-message {
+    font-size: 1.5rem;
+    font-weight: 700;
+    min-height: 40px;
+    color: white;
+    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.status-message.victory {
+    background: linear-gradient(45deg, #ff006e, #8338ec, #3a86ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-size: 2rem;
+    animation: victoryGlow 1.5s ease-in-out infinite;
+}
+
+@keyframes victoryGlow {
+    0%, 100% { filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8)); }
+    50% { filter: drop-shadow(0 0 20px rgba(255, 255, 255, 1)); }
+}
+
+.status-message.draw {
+    color: #ffd700;
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+}
+
+.board-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+.board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 12px;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 15px;
+    border-radius: 25px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2),
+                inset 0 0 50px rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 3px solid;
+    border-image: linear-gradient(45deg, #ff006e, #8338ec, #3a86ff, #06ffa5, #ffbe0b, #fb5607) 1;
+    max-width: 400px;
+    width: 100%;
+    aspect-ratio: 1;
+}
+
+.cell {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 4rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.cell::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.6) 0%, transparent 70%);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s ease, height 0.6s ease;
+}
+
+.cell:hover:not(.filled):not(.disabled) {
+    transform: scale(1.05);
+    box-shadow: 0 6px 25px rgba(255, 255, 255, 0.5),
+                0 0 30px rgba(138, 43, 226, 0.4);
+    background: rgba(255, 255, 255, 1);
+}
+
+.cell:hover:not(.filled):not(.disabled)::before {
+    width: 200%;
+    height: 200%;
+}
+
+.cell.filled {
+    cursor: not-allowed;
+    animation: cellPop 0.3s ease;
+}
+
+@keyframes cellPop {
+    0% { transform: scale(0.8); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.cell.disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.cell.player-x {
+    background: linear-gradient(135deg, #ff006e, #8338ec);
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.cell.player-o {
+    background: linear-gradient(135deg, #3a86ff, #06ffa5);
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.controls {
+    margin-top: 20px;
+}
+
+.reset-button {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 600;
+    padding: 15px 35px;
+    background: linear-gradient(45deg, #ff006e, #8338ec, #3a86ff);
+    background-size: 200% 200%;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3),
+                0 0 30px rgba(138, 43, 226, 0.4);
+    transition: all 0.3s ease;
+    animation: buttonGlow 3s ease infinite;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+@keyframes buttonGlow {
+    0%, 100% { 
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3),
+                    0 0 30px rgba(138, 43, 226, 0.4);
+    }
+    50% { 
+        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4),
+                    0 0 40px rgba(138, 43, 226, 0.6);
+    }
+}
+
+.reset-button:hover {
+    transform: translateY(-3px) scale(1.05);
+    background-position: 100% 50%;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4),
+                0 0 50px rgba(138, 43, 226, 0.6);
+}
+
+.reset-button:active {
+    transform: translateY(-1px) scale(1.02);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .title {
+        font-size: 1.8rem;
+    }
+    
+    .subtitle {
+        font-size: 1rem;
+    }
+    
+    .board {
+        max-width: 350px;
+        padding: 12px;
+        gap: 10px;
+    }
+    
+    .cell {
+        font-size: 3rem;
+    }
+    
+    .player-indicator {
+        font-size: 1.1rem;
+    }
+    
+    .status-message {
+        font-size: 1.2rem;
+    }
+    
+    .status-message.victory {
+        font-size: 1.5rem;
+    }
+    
+    .reset-button {
+        font-size: 1.1rem;
+        padding: 12px 28px;
+    }
+}
+
+@media (max-width: 480px) {
+    .title {
+        font-size: 1.5rem;
+    }
+    
+    .board {
+        max-width: 300px;
+        padding: 10px;
+        gap: 8px;
+    }
+    
+    .cell {
+        font-size: 2.5rem;
+        border-radius: 12px;
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1 class="title">
+                <span class="sparkle">✨</span>
+                Rainbow Unicorn Tic-Tac-Toe
+                <span class="sparkle">✨</span>
+            </h1>
+            <p class="subtitle">🦄 Magical Fun for Two Players 🦄</p>
+        </header>
+
+        <div class="game-info">
+            <div class="player-indicator">
+                <span id="current-player-display">Player 1 (🦄) goes first!</span>
+            </div>
+            <div id="game-status" class="status-message"></div>
+        </div>
+
+        <div class="board-container">
+            <div id="game-board" class="board">
+                <div class="cell" data-index="0"></div>
+                <div class="cell" data-index="1"></div>
+                <div class="cell" data-index="2"></div>
+                <div class="cell" data-index="3"></div>
+                <div class="cell" data-index="4"></div>
+                <div class="cell" data-index="5"></div>
+                <div class="cell" data-index="6"></div>
+                <div class="cell" data-index="7"></div>
+                <div class="cell" data-index="8"></div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button id="reset-btn" class="reset-button">🔄 Play Again</button>
+        </div>
+    </div>
+
+    <script>
+// Game State
+const gameState = {
+    board: ["", "", "", "", "", "", "", "", ""],
+    currentPlayer: "X",
+    winner: null,
+    isDraw: false,
+    gameOver: false
+};
+
+// Win conditions (all 8 possible winning combinations)
+const winConditions = [
+    [0, 1, 2], // Top row
+    [3, 4, 5], // Middle row
+    [6, 7, 8], // Bottom row
+    [0, 3, 6], // Left column
+    [1, 4, 7], // Middle column
+    [2, 5, 8], // Right column
+    [0, 4, 8], // Diagonal top-left to bottom-right
+    [2, 4, 6]  // Diagonal top-right to bottom-left
+];
+
+// DOM Elements
+const cells = document.querySelectorAll('.cell');
+const resetBtn = document.getElementById('reset-btn');
+const statusMessage = document.getElementById('game-status');
+const currentPlayerDisplay = document.getElementById('current-player-display');
+
+// Initialize game
+function initGame() {
+    cells.forEach((cell, index) => {
+        cell.addEventListener('click', () => handleCellClick(index));
+        cell.textContent = '';
+        cell.classList.remove('filled', 'disabled', 'player-x', 'player-o');
+    });
+    
+    resetBtn.addEventListener('click', resetGame);
+    updateDisplay();
+}
+
+// Handle cell click
+function handleCellClick(index) {
+    // Don't allow moves if game is over or cell is already filled
+    if (gameState.gameOver || gameState.board[index] !== "") {
+        return;
+    }
+    
+    // Place the mark
+    gameState.board[index] = gameState.currentPlayer;
+    updateCell(index);
+    
+    // Check for win or draw
+    checkGameStatus();
+    
+    // Switch player if game continues
+    if (!gameState.gameOver) {
+        gameState.currentPlayer = gameState.currentPlayer === "X" ? "O" : "X";
+        updateDisplay();
+    }
+}
+
+// Update a cell visually
+function updateCell(index) {
+    const cell = cells[index];
+    const player = gameState.board[index];
+    
+    cell.classList.add('filled');
+    
+    if (player === "X") {
+        cell.textContent = "🦄"; // Rainbow Unicorn for Player X
+        cell.classList.add('player-x');
+    } else {
+        cell.textContent = "✨"; // Sparkle/Star for Player O
+        cell.classList.add('player-o');
+    }
+}
+
+// Check for win or draw
+function checkGameStatus() {
+    // Check for win
+    for (let condition of winConditions) {
+        const [a, b, c] = condition;
+        if (
+            gameState.board[a] !== "" &&
+            gameState.board[a] === gameState.board[b] &&
+            gameState.board[a] === gameState.board[c]
+        ) {
+            gameState.winner = gameState.board[a];
+            gameState.gameOver = true;
+            displayWinner();
+            disableAllCells();
+            return;
+        }
+    }
+    
+    // Check for draw
+    if (!gameState.board.includes("")) {
+        gameState.isDraw = true;
+        gameState.gameOver = true;
+        displayDraw();
+        disableAllCells();
+        return;
+    }
+}
+
+// Display winner message
+function displayWinner() {
+    const playerName = gameState.winner === "X" ? "Player 1 (🦄)" : "Player 2 (✨)";
+    statusMessage.textContent = `🎉 ${playerName} Wins! Unicorn Victory! 🎉`;
+    statusMessage.classList.add('victory');
+    currentPlayerDisplay.textContent = '';
+}
+
+// Display draw message
+function displayDraw() {
+    statusMessage.textContent = "🌟 Magical Draw! 🌟";
+    statusMessage.classList.add('draw');
+    currentPlayerDisplay.textContent = '';
+}
+
+// Disable all cells
+function disableAllCells() {
+    cells.forEach(cell => {
+        cell.classList.add('disabled');
+    });
+}
+
+// Update display
+function updateDisplay() {
+    if (!gameState.gameOver) {
+        const playerName = gameState.currentPlayer === "X" ? "Player 1 (🦄)" : "Player 2 (✨)";
+        currentPlayerDisplay.textContent = `${playerName}'s turn`;
+        statusMessage.textContent = '';
+        statusMessage.classList.remove('victory', 'draw');
+    }
+}
+
+// Reset game
+function resetGame() {
+    gameState.board = ["", "", "", "", "", "", "", "", ""];
+    gameState.currentPlayer = "X";
+    gameState.winner = null;
+    gameState.isDraw = false;
+    gameState.gameOver = false;
+    
+    cells.forEach(cell => {
+        cell.textContent = '';
+        cell.classList.remove('filled', 'disabled', 'player-x', 'player-o');
+    });
+    
+    updateDisplay();
+}
+
+// Initialize the game when page loads
+initGame();
+    </script>
+</body>
+</html>
+
